@@ -7,6 +7,7 @@ var MockWorker = (function () {
     MockWorker.prototype.loadAssets = function (url, success, failure) {
         this.success = success;
         this.failure = failure;
+        //TODO: Determine whether the current environment can resolve svga1.0 files
         if (false) {
         }
         else {
@@ -23,9 +24,8 @@ var MockWorker = (function () {
     };
     MockWorker.prototype.load_viaProto = function (arraybuffer, success, failure) {
         try {
-            var protoBufDecoder = new ProtoBufDecoder();
             var inflate = new Zlib.Inflate(new Uint8Array(arraybuffer));
-            var movieData = protoBufDecoder.decode(inflate.decompress());
+            var movieData = ProtoBufDecoder.shareProtoBufDecoder().decode(inflate.decompress());
             var images = {};
             this.loadImages(images, undefined, movieData, success);
         }

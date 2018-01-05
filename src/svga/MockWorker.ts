@@ -8,6 +8,7 @@ class MockWorker {
         this.success = success
         this.failure = failure
 
+//TODO: Determine whether the current environment can resolve svga1.0 files
         if(false){
             
         }else{
@@ -26,9 +27,8 @@ class MockWorker {
 
     private load_viaProto(arraybuffer: any, success: any, failure: any) {
         try {
-            let protoBufDecoder = new ProtoBufDecoder()
             let inflate = new Zlib.Inflate(new Uint8Array(arraybuffer))
-            let movieData = protoBufDecoder.decode(inflate.decompress())
+            let movieData = ProtoBufDecoder.shareProtoBufDecoder().decode(inflate.decompress())
             let images = {};
 
             this.loadImages(images, undefined, movieData, success)

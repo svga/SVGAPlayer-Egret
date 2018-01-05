@@ -4,7 +4,7 @@ class VideoEntity {
     /**
      * SVGA 文件版本
      */
-    version: string
+    version: string = ""
 
     /**
      * 影片尺寸
@@ -13,25 +13,45 @@ class VideoEntity {
     /**
      * 帧率
      */
-    FPS: number
+    FPS: number = 20
 
     /**
      * 帧数
      */
-    frames: number
+    frames: number = 0
 
     /**
      * Bitmaps
      */
-    images: Object
+    images: Object = {}
 
     /**
      * SpriteEntity[]
      */
-    sprites: Array<any>
+    sprites: Array<any> = []
 
     constructor(spec: any, images: any){
-        this.videoSize.width = spec.params.viewBoxWidth || 0.0;
-        this.videoSize.height = spec.params.viewBoxHeight || 0.0;
+
+        if (typeof spec === "object" && spec.$type == ProtoBufDecoder.shareProtoBufDecoder().protoMovieEntity) {
+            if (typeof spec.params === "object") {
+                this.version = spec.ver;
+                this.videoSize.width = spec.params.viewBoxWidth || 0.0;
+                this.videoSize.height = spec.params.viewBoxHeight || 0.0;
+                this.FPS = spec.params.fps || 20;
+                this.frames = spec.params.frames || 0;
+            }
+            this.resetSprites(spec)
+        }
+
+        if(images){
+            this.images = images
+        }
+    }
+    private resetSprites(spec: any) {
+        if(spec.sprites instanceof Array){
+            this.sprites = spec.sprites.map((obj) => {
+                return new SpriteEntity(obj)
+            })
+        }
     }
 }

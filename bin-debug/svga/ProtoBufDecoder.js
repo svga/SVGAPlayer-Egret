@@ -10,6 +10,12 @@ var ProtoBufDecoder = (function () {
     ProtoBufDecoder.prototype.decode = function (data) {
         return this.protoMovieEntity.decode(data);
     };
+    ProtoBufDecoder.shareProtoBufDecoder = function () {
+        if (!this.protoBufDecoder) {
+            this.protoBufDecoder = new ProtoBufDecoder();
+        }
+        return this.protoBufDecoder;
+    };
     return ProtoBufDecoder;
 }());
 __reflect(ProtoBufDecoder.prototype, "ProtoBufDecoder");

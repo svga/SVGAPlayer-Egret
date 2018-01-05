@@ -7,9 +7,9 @@
      private loadViaWorker(url: string, success: any, failure: any) {
          let mockWorker = new MockWorker()
          mockWorker.loadAssets(url, function(data){
-             
-             let videoItem = new VideoEntity(data.movie, data.images)
-             success(videoItem)
+
+            let videoItem = new VideoEntity(data.movie, data.images)
+            success(videoItem)
         }, failure)
     }
  }

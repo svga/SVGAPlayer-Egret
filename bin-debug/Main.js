@@ -32,8 +32,11 @@ var Main = (function (_super) {
             egret.ticker.resume();
         };
         var parser = new Parser();
+        var player = new Player();
+        this.addChild(player);
         parser.load('https://raw.githubusercontent.com/yyued/SVGA-Samples/master/rose.svga', function (videoItem) {
-            console.log(videoItem);
+            player.setVideoItem(videoItem);
+            player.startAnimation();
         }, function (error) { });
     };
     return Main;

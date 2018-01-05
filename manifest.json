@@ -13,10 +13,12 @@
 	],
 	"game": [
 		"bin-debug/Main.js",
+		"bin-debug/svga/FrameEntity.js",
 		"bin-debug/svga/MockWorker.js",
 		"bin-debug/svga/Parser.js",
 		"bin-debug/svga/Player.js",
 		"bin-debug/svga/ProtoBufDecoder.js",
+		"bin-debug/svga/SpriteEntity.js",
 		"bin-debug/svga/VideoEntity.js"
 	]
 }

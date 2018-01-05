@@ -20,11 +20,13 @@ class Main extends eui.UILayer {
         }
 
         let parser = new Parser()
+        let player = new Player()
+        this.addChild(player)
+        
         parser.load('https://raw.githubusercontent.com/yyued/SVGA-Samples/master/rose.svga', function(videoItem){
             
-            console.log(videoItem)
-
+            player.setVideoItem(videoItem)
+            player.startAnimation()
         }, function(error){})
-
     }
 }
