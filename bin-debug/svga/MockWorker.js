@@ -23,17 +23,16 @@ var MockWorker = (function () {
         this.load_viaProto(request.response, this.success, this.failure);
     };
     MockWorker.prototype.load_viaProto = function (arraybuffer, success, failure) {
-        try {
-            var inflate = new Zlib.Inflate(new Uint8Array(arraybuffer));
-            var movieData = ProtoBufDecoder.shareProtoBufDecoder().decode(inflate.decompress());
-            var images = {};
-            this.loadImages(images, undefined, movieData, success);
-        }
-        catch (error) {
-            this.failure && this.failure(error);
-            console.log(error);
-            throw error;
-        }
+        // try {
+        var inflate = new Zlib.Inflate(new Uint8Array(arraybuffer));
+        var movieData = ProtoBufDecoder.shareProtoBufDecoder().decode(inflate.decompress());
+        var images = {};
+        this.loadImages(images, undefined, movieData, success);
+        // } catch (error) {
+        //     this.failure && this.failure(error)
+        //     console.log(error)
+        //     throw error
+        // }
     };
     MockWorker.prototype.loadImages = function (images, zip, movieData, success) {
         if (true) {

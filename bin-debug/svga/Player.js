@@ -21,46 +21,147 @@ var Player = (function (_super) {
         /**
          * Private methods & properties
          */
-        _this._asChild = false;
-        _this._container = undefined;
-        _this._renderer = undefined;
-        _this._ticker = undefined;
-        _this._drawingCanvas = undefined;
-        _this._contentMode = "AspectFit";
-        _this._videoItem = undefined;
-        _this._loopCount = 0;
-        _this._currentFrame = 0;
-        _this._dynamicImage = {};
-        _this._dynamicImageTransform = {};
-        _this._dynamicText = {};
-        _this._onFinished = undefined;
-        _this._onFrame = undefined;
-        _this._onPercentage = undefined;
-        _this._nextTickTime = 0;
-        _this._init();
+        _this.asChild = false;
+        _this.container = undefined;
+        _this.renderer = undefined;
+        _this.ticker = undefined;
+        _this.drawingCanvas = undefined;
+        _this.contentMode = "AspectFit";
+        _this.videoItem = undefined;
+        _this.loopCount = 0;
+        _this.currentFrame = 0;
+        _this.dynamicImage = {};
+        _this.dynamicImageTransform = {};
+        _this.dynamicText = {};
+        _this.onFinished = undefined;
+        _this.onFrame = undefined;
+        _this.onPercentage = undefined;
+        _this.nextTickTime = 0;
+        _this.init();
         return _this;
     }
-    Player.prototype._init = function () {
-        var shp = new egret.Shape();
-        shp.graphics.beginFill(0x00ff00);
-        shp.graphics.drawRect(0, 0, 100, 100);
-        shp.graphics.endFill();
-        shp.x = 100;
-        shp.y = 100;
-        this.addChild(shp);
+    Player.prototype.init = function () {
+        // if (this._container instanceof HTMLDivElement || this._asChild) {
+        //     if (this._container) {
+        //         const existedCanvasElements = this._container.querySelectorAll('canvas');
+        //         for (let index = 0; index < existedCanvasElements.length; index++) {
+        //             let element = existedCanvasElements[index];
+        //             if (element !== undefined && element.__isPlayer) {
+        //                 this._container.removeChild(element);
+        //             }
+        //         }
+        //     }
+        //     this._drawingCanvas = document.createElement('canvas');
+        //     this._drawingCanvas.__isPlayer = true
+        //     this._drawingCanvas.style.backgroundColor = "transparent"
+        //     if (this._container) {
+        //         this._container.appendChild(this._drawingCanvas);
+        //         this._container.style.textAlign = "left";
+        //     }
+        // }
+        this.renderer = new Renderer(this);
+        this.ticker = new Ticker(this);
     };
     Player.prototype.setVideoItem = function (videoItem) {
-        this._currentFrame = 0;
-        this._videoItem = videoItem;
-        // this._renderer.prepare();
-        // this.clear();
-        // this._update();
+        this.currentFrame = 0;
+        this.videoItem = videoItem;
+        this.renderer.prepare();
+        this.clear();
+        this.update();
     };
     Player.prototype.startAnimation = function () {
         // this.stopAnimation(false);
         // this._currentFrame = 0;
         // this._loopCount = 0;
         // this._ticker.start();
+    };
+    Player.prototype._onTick = function () {
+        if (typeof this.videoItem === "object") {
+            if (performance.now() >= this.nextTickTime) {
+                // this.nextTickTime = parseInt(1000 / this.videoItem.FPS) + performance.now() - (60 / this.videoItem.FPS) * 2
+                // this.();
+            }
+        }
+    };
+    Player.prototype.clear = function () {
+        this.renderer.clear();
+    };
+    Player.prototype.resize = function () {
+        // let asParent = false;
+        // if (this._drawingCanvas) {
+        //     let scaleX = 1.0; let scaleY = 1.0; let translateX = 0.0; let translateY = 0.0;
+        //     let targetSize;
+        //     if (this._drawingCanvas.parentNode) {
+        //         targetSize = { width: this._drawingCanvas.parentNode.clientWidth, height: this._drawingCanvas.parentNode.clientHeight };
+        //     }
+        //     else {
+        //         targetSize = this._videoItem.videoSize;
+        //     }
+        //     let imageSize = this._videoItem.videoSize;
+        //     if (targetSize.width >= imageSize.width && targetSize.height >= imageSize.height) {
+        //         this._drawingCanvas.width = targetSize.width;
+        //         this._drawingCanvas.height = targetSize.height;
+        //         this._drawingCanvas.style.webkitTransform = this._drawingCanvas.style.transform = "";
+        //         asParent = true;
+        //     }
+        //     else {
+        //         this._drawingCanvas.width = imageSize.width;
+        //         this._drawingCanvas.height = imageSize.height;
+        //         if (this._contentMode === "Fill") {
+        //             const scaleX = targetSize.width / imageSize.width;
+        //             const scaleY = targetSize.height / imageSize.height;
+        //             const translateX = (imageSize.width * scaleX - imageSize.width) / 2.0
+        //             const translateY = (imageSize.height * scaleY - imageSize.height) / 2.0
+        //             this._drawingCanvas.style.webkitTransform = this._drawingCanvas.style.transform = "matrix(" + scaleX + ", 0.0, 0.0, " + scaleY + ", " + translateX + ", " + translateY + ")"
+        //         }
+        //         else if (this._contentMode === "AspectFit" || this._contentMode === "AspectFill") {
+        //             const imageRatio = imageSize.width / imageSize.height;
+        //             const viewRatio = targetSize.width / targetSize.height;
+        //             if ((imageRatio >= viewRatio && this._contentMode === "AspectFit") || (imageRatio < viewRatio && this._contentMode === "AspectFill")) {
+        //                 const scale = targetSize.width / imageSize.width;
+        //                 const translateX = (imageSize.width * scale - imageSize.width) / 2.0
+        //                 const translateY = (imageSize.height * scale - imageSize.height) / 2.0 + (targetSize.height - imageSize.height * scale) / 2.0
+        //                 this._drawingCanvas.style.webkitTransform = this._drawingCanvas.style.transform = "matrix(" + scale + ", 0.0, 0.0, " + scale + ", " + translateX + ", " + translateY + ")"
+        //             }
+        //             else if ((imageRatio < viewRatio && this._contentMode === "AspectFit") || (imageRatio > viewRatio && this._contentMode === "AspectFill")) {
+        //                 const scale = targetSize.height / imageSize.height;
+        //                 const translateX = (imageSize.width * scale - imageSize.width) / 2.0 + (targetSize.width - imageSize.width * scale) / 2.0
+        //                 const translateY = (imageSize.height * scale - imageSize.height) / 2.0
+        //                 this._drawingCanvas.style.webkitTransform = this._drawingCanvas.style.transform = "matrix(" + scale + ", 0.0, 0.0, " + scale + ", " + translateX + ", " + translateY + ")"
+        //             }
+        //         }
+        //         this._globalTransform = undefined;
+        //     }
+        // }
+        // if (this._drawingCanvas === undefined || asParent === true) {
+        //     let scaleX = 1.0; let scaleY = 1.0; let translateX = 0.0; let translateY = 0.0;
+        //     let targetSize = { width: this._container !== undefined ? this._container.clientWidth : 0.0, height: this._container !== undefined ? this._container.clientHeight : 0.0 };
+        //     let imageSize = this._videoItem.videoSize;
+        //     if (this._contentMode === "Fill") {
+        //         scaleX = targetSize.width / imageSize.width;
+        //         scaleY = targetSize.height / imageSize.height;
+        //     }
+        //     else if (this._contentMode === "AspectFit" || this._contentMode === "AspectFill") {
+        //         const imageRatio = imageSize.width / imageSize.height;
+        //         const viewRatio = targetSize.width / targetSize.height;
+        //         if ((imageRatio >= viewRatio && this._contentMode === "AspectFit") || (imageRatio <= viewRatio && this._contentMode === "AspectFill")) {
+        //             scaleX = scaleY = targetSize.width / imageSize.width;
+        //             translateY = (targetSize.height - imageSize.height * scaleY) / 2.0
+        //         }
+        //         else if ((imageRatio < viewRatio && this._contentMode === "AspectFit") || (imageRatio > viewRatio && this._contentMode === "AspectFill")) {
+        //             scaleX = scaleY = targetSize.height / imageSize.height;
+        //             translateX = (targetSize.width - imageSize.width * scaleX) / 2.0
+        //         }
+        //     }
+        //     this._globalTransform = { a: scaleX, b: 0.0, c: 0.0, d: scaleY, tx: translateX, ty: translateY };
+        // }
+    };
+    Player.prototype.update = function () {
+        if (this.videoItem === undefined) {
+            return;
+        }
+        this.resize();
+        this.renderer.drawFrame(this.currentFrame);
     };
     return Player;
 }(egret.DisplayObjectContainer));

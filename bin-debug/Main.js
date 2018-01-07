@@ -31,10 +31,11 @@ var Main = (function (_super) {
         egret.lifecycle.onResume = function () {
             egret.ticker.resume();
         };
+        // console.log(egret.startTick)
         var parser = new Parser();
         var player = new Player();
         this.addChild(player);
-        parser.load('https://raw.githubusercontent.com/yyued/SVGA-Samples/master/rose.svga', function (videoItem) {
+        parser.load('http://p275rzl86.bkt.clouddn.com/shengli.svga?attname=&e=1515350933&token=aDjwKWEnt6_vcZq-B509kUsJmqhugDX9NijIHPZE:ePFgvORb_8xDO16anD_Uc67TbpA', function (videoItem) {
             player.setVideoItem(videoItem);
             player.startAnimation();
         }, function (error) { });

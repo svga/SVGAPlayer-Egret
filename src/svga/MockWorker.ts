@@ -26,18 +26,18 @@ class MockWorker {
     }
 
     private load_viaProto(arraybuffer: any, success: any, failure: any) {
-        try {
+        // try {
             let inflate = new Zlib.Inflate(new Uint8Array(arraybuffer))
             let movieData = ProtoBufDecoder.shareProtoBufDecoder().decode(inflate.decompress())
             let images = {};
 
             this.loadImages(images, undefined, movieData, success)
 
-        } catch (error) {
-            this.failure && this.failure(error)
-            console.log(error)
-            throw error
-        }
+        // } catch (error) {
+        //     this.failure && this.failure(error)
+        //     console.log(error)
+        //     throw error
+        // }
 
     }
 
