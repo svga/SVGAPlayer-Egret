@@ -70,21 +70,69 @@ var Player = (function (_super) {
         this.update();
     };
     Player.prototype.startAnimation = function () {
-        // this.stopAnimation(false);
-        // this._currentFrame = 0;
-        // this._loopCount = 0;
-        // this._ticker.start();
+        this.stopAnimation(false);
+        this.currentFrame = 0;
+        this.loopCount = 0;
+        this.ticker.start();
+    };
+    Player.prototype.stopAnimation = function (clear) {
+        if (clear === void 0) { clear = this.clearsAfterStop; }
+        this.ticker.stop();
+        if (clear) {
+            this.clear();
+        }
+    };
+    Player.prototype.pauseAnimation = function () {
+        this.stopAnimation(false);
     };
     Player.prototype._onTick = function () {
         if (typeof this.videoItem === "object") {
             if (performance.now() >= this.nextTickTime) {
-                // this.nextTickTime = parseInt(1000 / this.videoItem.FPS) + performance.now() - (60 / this.videoItem.FPS) * 2
-                // this.();
+                var time = 1000 / this.videoItem.FPS;
+                this.nextTickTime = parseInt(time.toString()) + performance.now() - (60 / this.videoItem.FPS) * 2;
+                this.next();
             }
+        }
+    };
+    Player.prototype.next = function () {
+        this.currentFrame++;
+        if (this.currentFrame >= this.videoItem.frames) {
+            this.currentFrame = 0;
+            this.loopCount++;
+            if (this.loops > 0 && this.loopCount >= this.loops) {
+                this.stopAnimation();
+                if (!this.clearsAfterStop && this.fillMode === "Backward") {
+                    this.stepToFrame(0);
+                }
+                if (typeof this.onFinished === "function") {
+                    this.onFinished();
+                }
+                return;
+            }
+        }
+        this.update();
+        if (typeof this.onFrame === "function") {
+            this.onFrame(this.currentFrame);
+        }
+        if (typeof this.onPercentage === "function") {
+            var frameadd = this.currentFrame + 1;
+            this.onPercentage(parseFloat(frameadd.toString()) / parseFloat(this.videoItem.frames.toString()));
         }
     };
     Player.prototype.clear = function () {
         this.renderer.clear();
+    };
+    Player.prototype.stepToFrame = function (frame, andPlay) {
+        if (andPlay === void 0) { andPlay = false; }
+        if (frame >= this.videoItem.frames || frame < 0) {
+            return;
+        }
+        this.pauseAnimation();
+        this.currentFrame = frame;
+        this.update();
+        if (andPlay) {
+            this.ticker.start();
+        }
     };
     Player.prototype.resize = function () {
         // let asParent = false;

@@ -23,14 +23,30 @@ var Renderer = (function () {
             this.bitmapCache = {};
             var totalCount_1 = 0;
             var loadedCount_1 = 0;
-            var _loop_1 = function () {
+            var _loop_1 = function (imageKey) {
                 var src = this_1.owner.videoItem.images[imageKey];
                 if (src.indexOf("iVBO") === 0 || src.indexOf("/9j/2w") === 0) {
                     totalCount_1++;
-                    var imgTag_1 = new Image;
-                    imgTag_1.onload = function () {
-                        imgTag_1.onload = null;
+                    // let imgTag: HTMLImageElement = new Image;
+                    // imgTag.onload = () => {
+                    //     imgTag.onload = null;
+                    //     loadedCount++;
+                    //     if (loadedCount == totalCount) {
+                    //         this.prepared = true
+                    //         if (typeof this.undrawFrame === "number") {
+                    //             this.drawFrame(this.undrawFrame);
+                    //             this.undrawFrame = undefined;
+                    //         }
+                    //     }
+                    // }
+                    // imgTag.src = 'data:image/png;base64,' + src
+                    // this.bitmapCache[imageKey] = imgTag
+                    var bitmapData = egret.BitmapData.create("base64", src, function (base64_bitmapdata) {
                         loadedCount_1++;
+                        var texture = new egret.Texture();
+                        texture.bitmapData = base64_bitmapdata;
+                        var bitmap = new egret.Bitmap(texture);
+                        _this.bitmapCache[imageKey] = bitmap;
                         if (loadedCount_1 == totalCount_1) {
                             _this.prepared = true;
                             if (typeof _this.undrawFrame === "number") {
@@ -38,9 +54,7 @@ var Renderer = (function () {
                                 _this.undrawFrame = undefined;
                             }
                         }
-                    };
-                    imgTag_1.src = 'data:image/png;base64,' + src;
-                    this_1.bitmapCache[imageKey] = imgTag_1;
+                    });
                     // let imgTag = document.createElement('img');
                     // imgTag.onload = function () {
                     //     loadedCount++;
@@ -57,9 +71,8 @@ var Renderer = (function () {
             };
             var this_1 = this;
             for (var imageKey in this.owner.videoItem.images) {
-                _loop_1();
+                _loop_1(imageKey);
             }
-            this.prepared = true;
         }
     };
     Renderer.prototype.clear = function () {
@@ -80,10 +93,13 @@ var Renderer = (function () {
                 if (frameItem.alpha < 0.05) {
                     return;
                 }
-                // 
-                var src = _this.bitmapCache[sprite.imageKey] || _this.owner.videoItem.images[sprite.imageKey];
-                var myBmp = new egret.Bitmap(src);
-                console.log(myBmp);
+                var bitmap = _this.bitmapCache[sprite.imageKey];
+                // var rect: egret.Rectangle = new egret.Rectangle(frameItem.layout.x, frameItem.layout.y, frameItem.layout.width, frameItem.layout.height)
+                // bitmap.scale9Grid = rect
+                bitmap.matrix = new egret.Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty);
+                bitmap.alpha = frameItem.alpha;
+                // // this.owner.addChild(myBmp);
+                _this.owner.addChild(bitmap);
             });
         }
         else {

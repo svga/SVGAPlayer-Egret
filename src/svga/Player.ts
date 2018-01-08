@@ -61,23 +61,73 @@ class Player extends egret.DisplayObjectContainer {
     }
 
     public startAnimation() {
-        // this.stopAnimation(false);
-        // this._currentFrame = 0;
-        // this._loopCount = 0;
-        // this._ticker.start();
+        this.stopAnimation(false)
+        this.currentFrame = 0
+        this.loopCount = 0
+        this.ticker.start()
+    }
+
+    private stopAnimation(clear: boolean = this.clearsAfterStop) {
+
+        this.ticker.stop()
+        if (clear) {
+            this.clear()
+        }
+    }
+
+    public pauseAnimation() {
+        this.stopAnimation(false);
     }
 
     public _onTick() {
         if (typeof this.videoItem === "object") {
             if (performance.now() >= this.nextTickTime) {
-                // this.nextTickTime = parseInt(1000 / this.videoItem.FPS) + performance.now() - (60 / this.videoItem.FPS) * 2
-                // this.();
+                let time: number = 1000 / this.videoItem.FPS
+                this.nextTickTime = parseInt(time.toString()) + performance.now() - (60 / this.videoItem.FPS) * 2
+                this.next()
             }
+        }
+    }
+    private next() {
+        this.currentFrame++;
+        if (this.currentFrame >= this.videoItem.frames) {
+            this.currentFrame = 0
+            this.loopCount++
+            if (this.loops > 0 && this.loopCount >= this.loops) {
+                this.stopAnimation()
+                if (!this.clearsAfterStop && this.fillMode === "Backward") {
+                    this.stepToFrame(0)
+                }
+                if (typeof this.onFinished === "function") {
+                    this.onFinished()
+                }
+                return
+            }
+        }
+        this.update()
+        if (typeof this.onFrame === "function") {
+            this.onFrame(this.currentFrame)
+        }
+        if (typeof this.onPercentage === "function") {
+            let frameadd = this.currentFrame + 1
+            this.onPercentage(parseFloat(frameadd.toString()) / parseFloat(this.videoItem.frames.toString()))
         }
     }
 
     private clear() {
         this.renderer.clear()
+    }
+
+    public stepToFrame(frame: number, andPlay: boolean = false) {
+        if (frame >= this.videoItem.frames || frame < 0) {
+            return
+        }
+        this.pauseAnimation()
+        this.currentFrame = frame
+        this.update()
+        if (andPlay) {
+            this.ticker.start()
+        }
     }
 
     private resize() {
