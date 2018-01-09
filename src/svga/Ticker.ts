@@ -7,20 +7,19 @@ class Ticker {
         this.owner = owner
     }
 
-    public start() {
-        if(this.running) { return; }
-        this.running = true
-        let requestFrame = () => {
-            egret.startTick((timeStamp: number): boolean => {
-                this.owner._onTick();
-                if (this.running === true) {
-                    requestFrame();
-                }
-//TODO: I don't know the boolean return for what?
-                return false
-            }, this);
+    private onTicker(timeStamp: number) {
+        if(this.running === false){
+            egret.stopTick(this.onTicker, this)
+            return false
         }
-        requestFrame();
+        this.owner._onTick()
+        return false
+    }
+
+    public start() {
+        if (this.running) { return; }
+        this.running = true
+        egret.startTick(this.onTicker, this)
     }
 
     public stop() {

@@ -105,13 +105,13 @@ class Player extends egret.DisplayObjectContainer {
             }
         }
         this.update()
-        if (typeof this.onFrame === "function") {
-            this.onFrame(this.currentFrame)
-        }
-        if (typeof this.onPercentage === "function") {
-            let frameadd = this.currentFrame + 1
-            this.onPercentage(parseFloat(frameadd.toString()) / parseFloat(this.videoItem.frames.toString()))
-        }
+        // if (typeof this.onFrame === "function") {
+        //     this.onFrame(this.currentFrame)
+        // }
+        // if (typeof this.onPercentage === "function") {
+        //     let frameadd = this.currentFrame + 1
+        //     this.onPercentage(parseFloat(frameadd.toString()) / parseFloat(this.videoItem.frames.toString()))
+        // }
     }
 
     private clear() {

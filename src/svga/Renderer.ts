@@ -48,7 +48,8 @@ class Renderer {
                         let texture = new egret.Texture()
                         texture.bitmapData = base64_bitmapdata
                         let bitmap: egret.Bitmap = new egret.Bitmap(texture)
-                        this.bitmapCache[imageKey] = bitmap
+                        bitmap.name = imageKey
+                        this.owner.addChild(bitmap)
 
                         if (loadedCount == totalCount) {
                             this.prepared = true
@@ -77,43 +78,22 @@ class Renderer {
     }
 
     public clear() {
-
+        this.owner.removeChildren()
     }
 
     public drawFrame(frame: any) {
 
         if (this.prepared) {
-            // const ctx = (this.owner._drawingCanvas || this.owner._container).getContext('2d')
-            // const areaFrame = {
-            //     x: 0.0,
-            //     y: 0.0,
-            //     width: (this.owner._drawingCanvas || this._owner._container).width,
-            //     height: (this._owner._drawingCanvas || this._owner._container).height,
-            // }
-            // ctx.clearRect(areaFrame.x, areaFrame.y, areaFrame.width, areaFrame.height)
+
             this.owner.videoItem.sprites.forEach(sprite => {
                 let frameItem: FrameEntity = sprite.frames[this.owner.currentFrame]
-                if (frameItem.alpha < 0.05) {
-                    return
-                }
-
-                let bitmap: egret.Bitmap = this.bitmapCache[sprite.imageKey]
-                // var rect: egret.Rectangle = new egret.Rectangle(frameItem.layout.x, frameItem.layout.y, frameItem.layout.width, frameItem.layout.height)
-                // bitmap.scale9Grid = rect
-
+                let bitmap = this.owner.getChildByName(sprite.imageKey)
                 bitmap.matrix = new egret.Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty)
                 bitmap.alpha = frameItem.alpha
-
-                
-
-                // // this.owner.addChild(myBmp);
-                this.owner.addChild(bitmap)
             })
         }
         else {
             this.undrawFrame = frame;
         }
     }
-
-
 }
