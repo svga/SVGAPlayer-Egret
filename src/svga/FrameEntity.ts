@@ -1,5 +1,5 @@
 
-class FrameEntity { 
+class FrameEntity {
 
     alpha: number = 0.0;
 
@@ -34,7 +34,7 @@ class FrameEntity {
     shapes: Array<any> = [];
 
     constructor(spec: any) {
-this.alpha = parseFloat(spec.alpha) || 0.0;
+        this.alpha = parseFloat(spec.alpha) || 0.0;
         if (spec.layout) {
             this.layout.x = parseFloat(spec.layout.x) || 0.0;
             this.layout.y = parseFloat(spec.layout.y) || 0.0;
@@ -49,7 +49,11 @@ this.alpha = parseFloat(spec.alpha) || 0.0;
             this.transform.tx = parseFloat(spec.transform.tx) || 0.0;
             this.transform.ty = parseFloat(spec.transform.ty) || 0.0;
         }
-        
+
+        if (spec.clipPath && spec.clipPath.length > 0) {
+            this.maskPath = new BezierPath(spec.clipPath, undefined, { fill: "#000000" });
+        }
+
         let llx = this.transform.a * this.layout.x + this.transform.c * this.layout.y + this.transform.tx;
         let lrx = this.transform.a * (this.layout.x + this.layout.width) + this.transform.c * this.layout.y + this.transform.tx;
         let lbx = this.transform.a * this.layout.x + this.transform.c * (this.layout.y + this.layout.height) + this.transform.tx;

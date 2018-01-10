@@ -56,7 +56,6 @@ class Player extends egret.DisplayObjectContainer {
         this.currentFrame = 0
         this.videoItem = videoItem
         this.renderer.prepare()
-        this.clear()
         this.update()
     }
 
@@ -68,7 +67,6 @@ class Player extends egret.DisplayObjectContainer {
     }
 
     private stopAnimation(clear: boolean = this.clearsAfterStop) {
-
         this.ticker.stop()
         if (clear) {
             this.clear()
@@ -77,6 +75,16 @@ class Player extends egret.DisplayObjectContainer {
 
     public pauseAnimation() {
         this.stopAnimation(false);
+    }
+
+    public _setupChildren(bitmapCache: Array<any>){
+        this.videoItem.sprites.forEach((sprite, index) => {
+
+            let texture = new egret.Texture()
+            texture.bitmapData = bitmapCache[sprite.imageKey]
+            let bitmap: egret.Bitmap = new egret.Bitmap(texture)
+            this.addChildAt(bitmap, index)
+        })
     }
 
     public _onTick() {
@@ -105,13 +113,13 @@ class Player extends egret.DisplayObjectContainer {
             }
         }
         this.update()
-        // if (typeof this.onFrame === "function") {
-        //     this.onFrame(this.currentFrame)
-        // }
-        // if (typeof this.onPercentage === "function") {
-        //     let frameadd = this.currentFrame + 1
-        //     this.onPercentage(parseFloat(frameadd.toString()) / parseFloat(this.videoItem.frames.toString()))
-        // }
+        if (typeof this.onFrame === "function") {
+            this.onFrame(this.currentFrame)
+        }
+        if (typeof this.onPercentage === "function") {
+            let frameadd = this.currentFrame + 1
+            this.onPercentage(parseFloat(frameadd.toString()) / parseFloat(this.videoItem.frames.toString()))
+        }
     }
 
     private clear() {
