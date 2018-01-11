@@ -66,10 +66,10 @@ class Renderer {
                     if(bitmap.mask == null){
 
                         bitmap.mask = new egret.Shape()
+                        bitmap.mask.matrix = bitmap.matrix
                         this.owner.addChild(bitmap.mask)
                     }
                     this.drawBezier(bitmap.mask, frameItem.maskPath)
-
                 }
             })
         }
@@ -88,7 +88,6 @@ class Renderer {
         if (obj._transform !== undefined && obj._transform !== null) {
             shape.matrix = new egret.Matrix(obj._transform.a, obj._transform.b, obj._transform.c, obj._transform.d, obj._transform.tx, obj._transform.ty + 50)
         }
-        shape.matrix = new egret.Matrix(1, 0, 0, 1, 100, 120)
 
         let currentPoint = { x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0 }
         shape.graphics.beginFill(0x000000, 1)
