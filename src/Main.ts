@@ -24,9 +24,9 @@ class Main extends egret.DisplayObjectContainer {
         let parser = new Parser()
         let player = new Player()
 
-        // player.loops = 1
-        player.width = 500
-        player.height = 500
+        player.loops = 1
+        player.width = 100
+        player.height = 100
         player.x = 0
         player.y = 0
         player.clearsAfterStop = false

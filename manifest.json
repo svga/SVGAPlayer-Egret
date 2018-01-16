@@ -12,16 +12,19 @@
 		"libs/protobuf/bin/protobuf.js"
 	],
 	"game": [
-		"bin-debug/svga/Player.js",
-		"bin-debug/Main.js",
+		"bin-debug/svga/SVGALayer.js",
+		"bin-debug/svga/VideoEntity.js",
 		"bin-debug/svga/FrameEntity.js",
 		"bin-debug/svga/MockWorker.js",
 		"bin-debug/svga/Parser.js",
-		"bin-debug/svga/BezierPath.js",
+		"bin-debug/svga/Player.js",
 		"bin-debug/svga/ProtoBufDecoder.js",
 		"bin-debug/svga/Renderer.js",
 		"bin-debug/svga/SpriteEntity.js",
+		"bin-debug/svga/SVGABitmapLayer.js",
+		"bin-debug/Main.js",
+		"bin-debug/svga/SVGAVectorLayer.js",
 		"bin-debug/svga/Ticker.js",
-		"bin-debug/svga/VideoEntity.js"
+		"bin-debug/svga/BezierPath.js"
 	]
 }

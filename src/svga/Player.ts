@@ -1,5 +1,5 @@
 
-class Player extends egret.DisplayObjectContainer {
+class Player extends SVGALayer {
     loops: number = 0;
     clearsAfterStop: boolean = true;
     fillMode: string = "Forward";
@@ -7,7 +7,6 @@ class Player extends egret.DisplayObjectContainer {
     /**
      * Private methods & properties
      */
-    private asChild: boolean = false;
     private container = undefined;
     private renderer = undefined;
     private ticker: Ticker = undefined;
@@ -24,38 +23,24 @@ class Player extends egret.DisplayObjectContainer {
     private onPercentage = undefined;
     private nextTickTime: number = 0;
 
+    private drawLayer: SVGALayer = null
+
     constructor() {
         super()
         this.init()
     }
 
     private init() {
-        // if (this._container instanceof HTMLDivElement || this._asChild) {
-        //     if (this._container) {
-        //         const existedCanvasElements = this._container.querySelectorAll('canvas');
-        //         for (let index = 0; index < existedCanvasElements.length; index++) {
-        //             let element = existedCanvasElements[index];
-        //             if (element !== undefined && element.__isPlayer) {
-        //                 this._container.removeChild(element);
-        //             }
-        //         }
-        //     }
-        //     this._drawingCanvas = document.createElement('canvas');
-        //     this._drawingCanvas.__isPlayer = true
-        //     this._drawingCanvas.style.backgroundColor = "transparent"
-        //     if (this._container) {
-        //         this._container.appendChild(this._drawingCanvas);
-        //         this._container.style.textAlign = "left";
-        //     }
-        // }
+
         this.renderer = new Renderer(this)
         this.ticker = new Ticker(this)
     }
 
     public setVideoItem(videoItem: any) {
-        this.currentFrame = 0
         this.videoItem = videoItem
-        this.renderer.prepare()
+        this.currentFrame = 0
+        this.clear()
+        this.prepare()
         this.update()
     }
 
@@ -80,10 +65,14 @@ class Player extends egret.DisplayObjectContainer {
     public _setupChildren(bitmapCache: Array<any>){
         this.videoItem.sprites.forEach((sprite, index) => {
 
-            let texture = new egret.Texture()
-            texture.bitmapData = bitmapCache[sprite.imageKey]
-            let bitmap: egret.Bitmap = new egret.Bitmap(texture)
-            this.addChildAt(bitmap, index)
+            console.log(sprite.imageKey)
+            // if(sprite.imageKey != null){
+
+            // let texture = new egret.Texture()
+            // texture.bitmapData = bitmapCache[sprite.imageKey]
+            // let bitmap: egret.Bitmap = new egret.Bitmap(texture)
+            // this.addChildAt(bitmap, index)
+            // }
         })
     }
 
@@ -96,8 +85,9 @@ class Player extends egret.DisplayObjectContainer {
             }
         }
     }
+
     private next() {
-        this.currentFrame++;
+        this.currentFrame++
         if (this.currentFrame >= this.videoItem.frames) {
             this.currentFrame = 0
             this.loopCount++
@@ -122,6 +112,10 @@ class Player extends egret.DisplayObjectContainer {
         }
     }
 
+    private prepare() {
+        this.renderer.prepare()
+    }
+
     private clear() {
         this.renderer.clear()
     }
@@ -139,6 +133,9 @@ class Player extends egret.DisplayObjectContainer {
     }
 
     private resize() {
+
+        // console.log(this.width)
+
         // let asParent = false;
         // if (this._drawingCanvas) {
         //     let scaleX = 1.0; let scaleY = 1.0; let translateX = 0.0; let translateY = 0.0;

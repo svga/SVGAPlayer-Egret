@@ -2,6 +2,7 @@
 class Renderer {
     static validMethods = 'MLHVCSQRZmlhvcsqrz'
 
+
     private owner: any = undefined;
     private prepared: boolean = false;
     private undrawFrame: any = undefined;
@@ -38,8 +39,8 @@ class Renderer {
                             if (typeof this.undrawFrame === "number") {
 
                                 this.owner._setupChildren(this.bitmapCache)
-                                this.drawFrame(this.undrawFrame);
-                                this.undrawFrame = undefined;
+                                // this.drawFrame(this.undrawFrame);
+                                // this.undrawFrame = undefined;
                             }
                         }
                     })
@@ -49,7 +50,10 @@ class Renderer {
     }
 
     public clear() {
-        this.owner.removeChildren()
+        if(this.owner.drawLayer != null){
+            this.owner.removeChild(this.owner.drawLayer)
+            this.owner.drawLayer = null
+        }
     }
 
     public drawFrame(frame: any) {
@@ -63,13 +67,20 @@ class Renderer {
                 bitmap.alpha = frameItem.alpha
 
                 if (frameItem.maskPath !== undefined && frameItem.maskPath !== null) {
-                    if(bitmap.mask == null){
+                    let maskShape: egret.Shape = <egret.Shape>bitmap.mask
+                    if(maskShape == null){
 
-                        bitmap.mask = new egret.Shape()
-                        bitmap.mask.matrix = bitmap.matrix
-                        this.owner.addChild(bitmap.mask)
+                        maskShape = new egret.Shape()
+                        this.owner.addChild(maskShape)
                     }
-                    this.drawBezier(bitmap.mask, frameItem.maskPath)
+                    this.drawBezier(maskShape, frameItem.maskPath)
+                    maskShape.matrix = bitmap.matrix
+                    bitmap.mask = maskShape
+                }else{
+                    if(bitmap.mask != null){
+                        this.owner.removeChild(bitmap.mask)
+                        bitmap.mask = null
+                    }
                 }
             })
         }
@@ -85,9 +96,9 @@ class Renderer {
         // ctx.save();
         // this.resetShapeStyles(ctx, obj);
 
-        if (obj._transform !== undefined && obj._transform !== null) {
-            shape.matrix = new egret.Matrix(obj._transform.a, obj._transform.b, obj._transform.c, obj._transform.d, obj._transform.tx, obj._transform.ty + 50)
-        }
+        // if (obj._transform !== undefined && obj._transform !== null) {
+        //     shape.matrix = new egret.Matrix(obj._transform.a, obj._transform.b, obj._transform.c, obj._transform.d, obj._transform.tx, obj._transform.ty + 50)
+        // }
 
         let currentPoint = { x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0 }
         shape.graphics.beginFill(0x000000, 1)
@@ -101,10 +112,10 @@ class Renderer {
             }
         })
         if (obj._styles && obj._styles.fill) {
-            console.log("fill()")
+            // console.log("fill()")
         }
         if (obj._styles && obj._styles.stroke) {
-            console.log("stroke()")
+            // console.log("stroke()")
         }
 
         shape.graphics.endFill()
