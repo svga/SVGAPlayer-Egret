@@ -4,70 +4,93 @@ class SVGAVectorLayer extends egret.Sprite {
         super()
     }
 
-    private drawBezier(obj: BezierPath) {
+    public setBezier(obj: BezierPath) {
 
         if(obj == null) { return }
-
         this.graphics.clear()
+        this.requestBezierShape(obj)
+    }
 
+        private requestBezierShape(obj: BezierPath) {
+        this.resetStyle(obj)
         let currentPoint = { x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0 }
-        this.graphics.beginFill(0x000000, 1)
-        let d = obj._d.replace(/([a-zA-Z])/g, '|||$1 ').replace(/,/g, ' ');
+        const d = obj._d.replace(/([a-zA-Z])/g, '|||$1 ').replace(/,/g, ' ');
         d.split('|||').forEach(segment => {
             if (segment.length == 0) { return; }
             const firstLetter = segment.substr(0, 1);
             if (Renderer.validMethods.indexOf(firstLetter) >= 0) {
                 const args = segment.substr(1).trim().split(" ");
-                this.drawBezierElement(this, currentPoint, firstLetter, args);
+                this.drawBezierElement(currentPoint, firstLetter, args);
             }
         })
-        if (obj._styles && obj._styles.fill) {
-            // console.log("fill()")
+        if (obj._transform !== undefined && obj._transform !== null) {
+            // shape.transform = new Laya.Matrix(obj._transform.a, obj._transform.b, obj._transform.c, obj._transform.d, obj._transform.tx, obj._transform.ty);
         }
-        if (obj._styles && obj._styles.stroke) {
-            // console.log("stroke()")
-        }
-
-        this.graphics.endFill()
+        // return shape;
     }
 
-    private drawBezierElement(shape, currentPoint, method, args) {
+        private resetStyle(obj: BezierPath) {
+        let styles = obj._styles
+        if (!styles) { return }
+
+        this.graphics.beginFill(this.requestHexFromRGB(styles.stroke), styles.stroke[3])
+        //     const width = styles.strokeWidth || 0.0;
+        //     const caps = styles.lineCap || '';
+        //     const joints = styles.lineJoin || '';
+        //     const miterLimit = styles.miterLimit || '';
+        //     // shape.setStrokeStyle(width, caps, joints, miterLimit, true);
+        // if (styles && styles.fill) {
+        //     // shape.beginFill(`rgba(${parseInt(styles.fill[0] * 255)}, ${parseInt(styles.fill[1] * 255)}, ${parseInt(styles.fill[2] * 255)}, ${styles.fill[3]})`);
+        // }
+        // if (styles && styles.lineDash) {
+        //     // shape.setStrokeDash([styles.lineDash[0], styles.lineDash[1]], styles.lineDash[2]);
+        // }
+    }
+    
+    private requestHexFromRGB(color: any): number{
+        if(!color) { return 0xffffff }
+        var x = 16777215
+        return x
+
+    }
+
+    private drawBezierElement(currentPoint, method, args) {
         switch (method) {
             case 'M':
                 currentPoint.x = Number(args[0]);
                 currentPoint.y = Number(args[1]);
-                shape.graphics.moveTo(currentPoint.x, currentPoint.y);
+                this.graphics.moveTo(currentPoint.x, currentPoint.y);
                 break;
             case 'm':
                 currentPoint.x += Number(args[0]);
                 currentPoint.y += Number(args[1]);
-                shape.graphics.moveTo(currentPoint.x, currentPoint.y);
+                this.graphics.moveTo(currentPoint.x, currentPoint.y);
                 break;
             case 'L':
                 currentPoint.x = Number(args[0]);
                 currentPoint.y = Number(args[1]);
-                shape.graphics.lineTo(currentPoint.x, currentPoint.y);
+                this.graphics.lineTo(currentPoint.x, currentPoint.y);
                 break;
             case 'l':
                 currentPoint.x += Number(args[0]);
                 currentPoint.y += Number(args[1]);
-                shape.graphics.lineTo(currentPoint.x, currentPoint.y);
+                this.graphics.lineTo(currentPoint.x, currentPoint.y);
                 break;
             case 'H':
                 currentPoint.x = Number(args[0]);
-                shape.graphics.lineTo(currentPoint.x, currentPoint.y);
+                this.graphics.lineTo(currentPoint.x, currentPoint.y);
                 break;
             case 'h':
                 currentPoint.x += Number(args[0]);
-                shape.graphics.lineTo(currentPoint.x, currentPoint.y);
+                this.graphics.lineTo(currentPoint.x, currentPoint.y);
                 break;
             case 'V':
                 currentPoint.y = Number(args[0]);
-                shape.graphics.lineTo(currentPoint.x, currentPoint.y);
+                this.graphics.lineTo(currentPoint.x, currentPoint.y);
                 break;
             case 'v':
                 currentPoint.y += Number(args[0]);
-                shape.graphics.lineTo(currentPoint.x, currentPoint.y);
+                this.graphics.lineTo(currentPoint.x, currentPoint.y);
                 break;
             case 'C':
                 currentPoint.x1 = Number(args[0]);
@@ -76,7 +99,7 @@ class SVGAVectorLayer extends egret.Sprite {
                 currentPoint.y2 = Number(args[3]);
                 currentPoint.x = Number(args[4]);
                 currentPoint.y = Number(args[5]);
-                shape.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
                 break;
             case 'c':
                 currentPoint.x1 = currentPoint.x + Number(args[0]);
@@ -85,7 +108,7 @@ class SVGAVectorLayer extends egret.Sprite {
                 currentPoint.y2 = currentPoint.y + Number(args[3]);
                 currentPoint.x += Number(args[4]);
                 currentPoint.y += Number(args[5]);
-                shape.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
                 break;
             case 'S':
                 if (currentPoint.x1 && currentPoint.y1 && currentPoint.x2 && currentPoint.y2) {
@@ -95,13 +118,13 @@ class SVGAVectorLayer extends egret.Sprite {
                     currentPoint.y2 = Number(args[1]);
                     currentPoint.x = Number(args[2]);
                     currentPoint.y = Number(args[3]);
-                    shape.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                    // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
                 } else {
                     currentPoint.x1 = Number(args[0]);
                     currentPoint.y1 = Number(args[1]);
                     currentPoint.x = Number(args[2]);
                     currentPoint.y = Number(args[3]);
-                    shape.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                    // this.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
                 }
                 break;
             case 's':
@@ -112,13 +135,13 @@ class SVGAVectorLayer extends egret.Sprite {
                     currentPoint.y2 = currentPoint.y + Number(args[1]);
                     currentPoint.x += Number(args[2]);
                     currentPoint.y += Number(args[3]);
-                    shape.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                    // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
                 } else {
                     currentPoint.x1 = currentPoint.x + Number(args[0]);
                     currentPoint.y1 = currentPoint.y + Number(args[1]);
                     currentPoint.x += Number(args[2]);
                     currentPoint.y += Number(args[3]);
-                    shape.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                    // this.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
                 }
                 break;
             case 'Q':
@@ -126,14 +149,14 @@ class SVGAVectorLayer extends egret.Sprite {
                 currentPoint.y1 = Number(args[1]);
                 currentPoint.x = Number(args[2]);
                 currentPoint.y = Number(args[3]);
-                shape.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                // shape.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
                 break;
             case 'q':
                 currentPoint.x1 = currentPoint.x + Number(args[0]);
                 currentPoint.y1 = currentPoint.y + Number(args[1]);
                 currentPoint.x += Number(args[2]);
                 currentPoint.y += Number(args[3]);
-                shape.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                // this.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
                 break;
             case 'A':
                 break;

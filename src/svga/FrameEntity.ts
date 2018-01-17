@@ -131,7 +131,7 @@ class FrameEntity {
                 })
             }
             if (spec.shapes[0] && spec.shapes[0].type === "keep") {
-                this.shapes = FrameEntity.lastShapes;
+                this.shapes = [{"type": "keep"}]
             }
             else {
                 this.shapes = spec.shapes

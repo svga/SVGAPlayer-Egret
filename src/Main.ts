@@ -24,7 +24,7 @@ class Main extends egret.DisplayObjectContainer {
         let parser = new Parser()
         let player = new Player()
 
-        player.loops = 1
+        // player.loops = 1
         player.width = 100
         player.height = 100
         player.x = 0
@@ -33,7 +33,7 @@ class Main extends egret.DisplayObjectContainer {
         this.addChild(player)
 
         parser.load('http://p275rzl86.bkt.clouddn.com/bear.svga', function (videoItem) {
-
+            console.log(videoItem)
             player.setVideoItem(videoItem)
             player.startAnimation()
         }, function (error) { })

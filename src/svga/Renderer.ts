@@ -39,8 +39,8 @@ class Renderer {
                             if (typeof this.undrawFrame === "number") {
 
                                 this.owner._setupChildren(this.bitmapCache)
-                                // this.drawFrame(this.undrawFrame);
-                                // this.undrawFrame = undefined;
+                                this.drawFrame(this.undrawFrame);
+                                this.undrawFrame = undefined;
                             }
                         }
                     })
@@ -50,7 +50,7 @@ class Renderer {
     }
 
     public clear() {
-        if(this.owner.drawLayer != null){
+        if (this.owner.drawLayer != null) {
             this.owner.removeChild(this.owner.drawLayer)
             this.owner.drawLayer = null
         }
@@ -62,11 +62,12 @@ class Renderer {
             this.owner.videoItem.sprites.forEach((sprite, index) => {
                 let frameItem: FrameEntity = sprite.frames[this.owner.currentFrame]
                 let displayObj: egret.DisplayObject = this.owner.getChildAt(index)
-                
-                if (displayObj instanceof SVGAVectorLayer){
-                    if(index > 0 && )
-                    if(frameItem.alpha > 0){
-                        console.log(frameItem)
+                if (displayObj instanceof SVGAVectorLayer) {
+                    let shapeItem: any = frameItem.shapes[0]
+                    if (frameItem.alpha > 0 && shapeItem && shapeItem.type == "shape") {
+                        if(shapeItem.shape.d){
+                            displayObj.setBezier(new BezierPath(shapeItem.shape.d, frameItem.transform, shapeItem.styles))
+                        }
                     }
                 }
                 displayObj.matrix = new egret.Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty)
@@ -74,15 +75,15 @@ class Renderer {
 
                 if (frameItem.maskPath !== undefined && frameItem.maskPath !== null) {
                     let maskShape: egret.Shape = <egret.Shape>displayObj.mask
-                    if(maskShape == null){
+                    if (maskShape == null) {
                         maskShape = new egret.Shape()
                         this.owner.addChild(maskShape)
                     }
                     this.drawBezier(maskShape, frameItem.maskPath)
                     maskShape.matrix = displayObj.matrix
                     displayObj.mask = maskShape
-                }else{
-                    if(displayObj.mask != null){
+                } else {
+                    if (displayObj.mask != null) {
                         this.owner.removeChild(displayObj.mask)
                         displayObj.mask = null
                     }

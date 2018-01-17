@@ -45,10 +45,17 @@ class Player extends SVGALayer {
     }
 
     public startAnimation() {
-        this.stopAnimation(false)
-        this.currentFrame = 0
-        this.loopCount = 0
-        this.ticker.start()
+        if(this.renderer.prepared){
+            this.stopAnimation(false)
+            this.currentFrame = 0
+            this.loopCount = 0
+            this.ticker.start()
+        }else{
+            console.log("wait for prepared")
+            egret.setTimeout(()=>{
+                this.startAnimation()
+            }, 100, null)
+        }
     }
 
     private stopAnimation(clear: boolean = this.clearsAfterStop) {
