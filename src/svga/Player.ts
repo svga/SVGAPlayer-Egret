@@ -65,14 +65,16 @@ class Player extends SVGALayer {
     public _setupChildren(bitmapCache: Array<any>){
         this.videoItem.sprites.forEach((sprite, index) => {
 
-            console.log(sprite.imageKey)
-            // if(sprite.imageKey != null){
-
-            // let texture = new egret.Texture()
-            // texture.bitmapData = bitmapCache[sprite.imageKey]
-            // let bitmap: egret.Bitmap = new egret.Bitmap(texture)
-            // this.addChildAt(bitmap, index)
-            // }
+            if(sprite.imageKey.indexOf('.vector') >= 0){
+                let vectorLayer: SVGAVectorLayer = new SVGAVectorLayer()
+                this.addChildAt(vectorLayer, index)
+             
+            }else{
+                let texture = new egret.Texture()
+                texture.bitmapData = bitmapCache[sprite.imageKey]
+                let bitmap: egret.Bitmap = new egret.Bitmap(texture)
+                this.addChildAt(bitmap, index)
+            }
         })
     }
 

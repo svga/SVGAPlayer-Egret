@@ -61,25 +61,30 @@ class Renderer {
         if (this.prepared) {
             this.owner.videoItem.sprites.forEach((sprite, index) => {
                 let frameItem: FrameEntity = sprite.frames[this.owner.currentFrame]
-
-                let bitmap: egret.Bitmap = this.owner.getChildAt(index)
-                bitmap.matrix = new egret.Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty)
-                bitmap.alpha = frameItem.alpha
+                let displayObj: egret.DisplayObject = this.owner.getChildAt(index)
+                
+                if (displayObj instanceof SVGAVectorLayer){
+                    if(index > 0 && )
+                    if(frameItem.alpha > 0){
+                        console.log(frameItem)
+                    }
+                }
+                displayObj.matrix = new egret.Matrix(frameItem.transform.a, frameItem.transform.b, frameItem.transform.c, frameItem.transform.d, frameItem.transform.tx, frameItem.transform.ty)
+                displayObj.alpha = frameItem.alpha
 
                 if (frameItem.maskPath !== undefined && frameItem.maskPath !== null) {
-                    let maskShape: egret.Shape = <egret.Shape>bitmap.mask
+                    let maskShape: egret.Shape = <egret.Shape>displayObj.mask
                     if(maskShape == null){
-
                         maskShape = new egret.Shape()
                         this.owner.addChild(maskShape)
                     }
                     this.drawBezier(maskShape, frameItem.maskPath)
-                    maskShape.matrix = bitmap.matrix
-                    bitmap.mask = maskShape
+                    maskShape.matrix = displayObj.matrix
+                    displayObj.mask = maskShape
                 }else{
-                    if(bitmap.mask != null){
-                        this.owner.removeChild(bitmap.mask)
-                        bitmap.mask = null
+                    if(displayObj.mask != null){
+                        this.owner.removeChild(displayObj.mask)
+                        displayObj.mask = null
                     }
                 }
             })
