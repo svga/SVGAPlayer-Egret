@@ -1,17 +1,17 @@
 
 class SVGAVectorLayer extends egret.Sprite {
-    constructor(){
+    constructor() {
         super()
     }
 
     public setBezier(obj: BezierPath) {
 
-        if(obj == null) { return }
+        if (obj == null) { return }
         this.graphics.clear()
         this.requestBezierShape(obj)
     }
 
-        private requestBezierShape(obj: BezierPath) {
+    private requestBezierShape(obj: BezierPath) {
         this.resetStyle(obj)
         let currentPoint = { x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0 }
         const d = obj._d.replace(/([a-zA-Z])/g, '|||$1 ').replace(/,/g, ' ');
@@ -23,18 +23,15 @@ class SVGAVectorLayer extends egret.Sprite {
                 this.drawBezierElement(currentPoint, firstLetter, args);
             }
         })
-        if (obj._transform !== undefined && obj._transform !== null) {
-            // shape.transform = new Laya.Matrix(obj._transform.a, obj._transform.b, obj._transform.c, obj._transform.d, obj._transform.tx, obj._transform.ty);
-        }
-        // return shape;
+        this.graphics.endFill()
     }
 
-        private resetStyle(obj: BezierPath) {
+    private resetStyle(obj: BezierPath) {
         let styles = obj._styles
         if (!styles) { return }
         let rgbaDic: any = this.requestHexFromRGBA(styles.stroke)
         this.graphics.beginFill(rgbaDic.color, rgbaDic.alpha)
-        
+
         let strokeWidth = styles.strokeWidth || 0.0
         let lineCap = styles.lineCap || ''
         let lineJoin = styles.lineJoin || ''
@@ -48,12 +45,15 @@ class SVGAVectorLayer extends egret.Sprite {
             // shape.setStrokeDash([styles.lineDash[0], styles.lineDash[1]], styles.lineDash[2]);
         }
     }
-    
-    private requestHexFromRGBA(color: any): any{
-        if(!color) { return {"color": 0xffffff, "alpha": 0} }
+
+    private requestHexFromRGBA(color: any): any {
+        if (!color) {
+            console.log(color)
+             return { "color": 0xffffff, "alpha": 1 } 
+        }
         let hexColor = (((color[0] * 255) << 16) | ((color[1] * 255) << 8) | color[2] * 255)
 
-        return {"color": hexColor, "alpha": color[3]}
+        return { "color": hexColor, "alpha": color[3] }
     }
 
     private drawBezierElement(currentPoint, method, args) {
@@ -101,7 +101,7 @@ class SVGAVectorLayer extends egret.Sprite {
                 currentPoint.y2 = Number(args[3]);
                 currentPoint.x = Number(args[4]);
                 currentPoint.y = Number(args[5]);
-                // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                this.graphics.cubicCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y)
                 break;
             case 'c':
                 currentPoint.x1 = currentPoint.x + Number(args[0]);
@@ -110,7 +110,7 @@ class SVGAVectorLayer extends egret.Sprite {
                 currentPoint.y2 = currentPoint.y + Number(args[3]);
                 currentPoint.x += Number(args[4]);
                 currentPoint.y += Number(args[5]);
-                // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                this.graphics.cubicCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y)
                 break;
             case 'S':
                 if (currentPoint.x1 && currentPoint.y1 && currentPoint.x2 && currentPoint.y2) {
@@ -120,13 +120,13 @@ class SVGAVectorLayer extends egret.Sprite {
                     currentPoint.y2 = Number(args[1]);
                     currentPoint.x = Number(args[2]);
                     currentPoint.y = Number(args[3]);
-                    // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                    this.graphics.cubicCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y)
                 } else {
                     currentPoint.x1 = Number(args[0]);
                     currentPoint.y1 = Number(args[1]);
                     currentPoint.x = Number(args[2]);
                     currentPoint.y = Number(args[3]);
-                    // this.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                    this.graphics.curveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y)
                 }
                 break;
             case 's':
@@ -137,13 +137,13 @@ class SVGAVectorLayer extends egret.Sprite {
                     currentPoint.y2 = currentPoint.y + Number(args[1]);
                     currentPoint.x += Number(args[2]);
                     currentPoint.y += Number(args[3]);
-                    // this.graphics.bezierCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
+                    this.graphics.cubicCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x2, currentPoint.y2, currentPoint.x, currentPoint.y);
                 } else {
                     currentPoint.x1 = currentPoint.x + Number(args[0]);
                     currentPoint.y1 = currentPoint.y + Number(args[1]);
                     currentPoint.x += Number(args[2]);
                     currentPoint.y += Number(args[3]);
-                    // this.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                    this.graphics.curveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y)
                 }
                 break;
             case 'Q':
@@ -151,14 +151,14 @@ class SVGAVectorLayer extends egret.Sprite {
                 currentPoint.y1 = Number(args[1]);
                 currentPoint.x = Number(args[2]);
                 currentPoint.y = Number(args[3]);
-                // shape.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                this.graphics.curveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y)
                 break;
             case 'q':
                 currentPoint.x1 = currentPoint.x + Number(args[0]);
                 currentPoint.y1 = currentPoint.y + Number(args[1]);
                 currentPoint.x += Number(args[2]);
                 currentPoint.y += Number(args[3]);
-                // this.graphics.quadraticCurveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y);
+                this.graphics.curveTo(currentPoint.x1, currentPoint.y1, currentPoint.x, currentPoint.y)
                 break;
             case 'A':
                 break;

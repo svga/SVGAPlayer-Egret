@@ -50,10 +50,7 @@ class Renderer {
     }
 
     public clear() {
-        if (this.owner.drawLayer != null) {
-            this.owner.removeChild(this.owner.drawLayer)
-            this.owner.drawLayer = null
-        }
+        this.owner.removeChildren()
     }
 
     public drawFrame(frame: any) {
@@ -99,12 +96,6 @@ class Renderer {
 
         let shape: egret.Shape = mask
         shape.graphics.clear()
-        // ctx.save();
-        // this.resetShapeStyles(ctx, obj);
-
-        // if (obj._transform !== undefined && obj._transform !== null) {
-        //     shape.matrix = new egret.Matrix(obj._transform.a, obj._transform.b, obj._transform.c, obj._transform.d, obj._transform.tx, obj._transform.ty + 50)
-        // }
 
         let currentPoint = { x: 0, y: 0, x1: 0, y1: 0, x2: 0, y2: 0 }
         shape.graphics.beginFill(0x000000, 1)

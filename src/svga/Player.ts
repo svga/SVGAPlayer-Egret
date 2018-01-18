@@ -7,23 +7,22 @@ class Player extends SVGALayer {
     /**
      * Private methods & properties
      */
-    private container = undefined;
-    private renderer = undefined;
-    private ticker: Ticker = undefined;
-    private drawingCanvas = undefined;
+    private container = undefined
+    private renderer = undefined
+    private ticker: Ticker = undefined
+    private drawingCanvas = undefined
     private contentMode: string = "AspectFit"
-    private videoItem: VideoEntity = undefined;
-    private loopCount: number = 0;
-    private currentFrame: number = 0;
-    private dynamicImage = {};
-    private dynamicImageTransform = {};
-    private dynamicText = {};
-    private onFinished = undefined;
-    private onFrame = undefined;
-    private onPercentage = undefined;
-    private nextTickTime: number = 0;
-
-    private drawLayer: SVGALayer = null
+    private videoItem: VideoEntity = undefined
+    private loopCount: number = 0
+    private currentFrame: number = 0
+    private dynamicImage = {}
+    private dynamicImageTransform = {}
+    private dynamicText = {}
+    private onFinished = undefined
+    private onFrame = undefined
+    private onPercentage = undefined
+    private nextTickTime: number = 0
+    private globalTransform = null
 
     constructor() {
         super()
@@ -122,6 +121,7 @@ class Player extends SVGALayer {
     }
 
     private prepare() {
+        this.resize()
         this.renderer.prepare()
     }
 
@@ -143,12 +143,14 @@ class Player extends SVGALayer {
 
     private resize() {
 
-        // console.log(this.width)
-
         // let asParent = false;
         // if (this._drawingCanvas) {
-        //     let scaleX = 1.0; let scaleY = 1.0; let translateX = 0.0; let translateY = 0.0;
-        //     let targetSize;
+            let scaleX = 1.0
+            let scaleY = 1.0
+            let translateX = 0.0
+            let translateY = 0.0
+            let targetSize = this.videoItem.videoSize
+
         //     if (this._drawingCanvas.parentNode) {
         //         targetSize = { width: this._drawingCanvas.parentNode.clientWidth, height: this._drawingCanvas.parentNode.clientHeight };
         //     }
@@ -211,14 +213,34 @@ class Player extends SVGALayer {
         //             translateX = (targetSize.width - imageSize.width * scaleX) / 2.0
         //         }
         //     }
-        //     this._globalTransform = { a: scaleX, b: 0.0, c: 0.0, d: scaleY, tx: translateX, ty: translateY };
+        scaleX = this.width / targetSize.width
+        scaleY = this.height / targetSize.height
+        translateX = this.x
+        translateY = this.y
+        this.globalTransform = { a: scaleX, b: 0.0, c: 0.0, d: scaleY, tx: translateX, ty: translateY }
         // }
-    }
+        if (this.globalTransform) {
+            this.matrix = new egret.Matrix(this.globalTransform.a, this.globalTransform.b, this.globalTransform.c, this.globalTransform.d, this.globalTransform.tx, this.globalTransform.ty)
+        }
 
+        let shape: egret.Shape = new egret.Shape()
+        shape.x = this.x
+        shape.y = this.y
+        shape.width = this.width
+        shape.height = this.height
+
+        shape.graphics.beginFill(0x000ff);
+		shape.graphics.drawRect(0, 0, shape.width, shape.height);
+		shape.graphics.endFill();
+
+        shape.matrix = this.matrix
+        this.parent.addChild(shape)
+
+        this.mask = shape
+    }
 
     private update() {
         if (this.videoItem === undefined) { return }
-        this.resize()
         this.renderer.drawFrame(this.currentFrame)
     }
 }
