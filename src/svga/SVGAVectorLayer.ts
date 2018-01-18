@@ -32,26 +32,28 @@ class SVGAVectorLayer extends egret.Sprite {
         private resetStyle(obj: BezierPath) {
         let styles = obj._styles
         if (!styles) { return }
+        let rgbaDic: any = this.requestHexFromRGBA(styles.stroke)
+        this.graphics.beginFill(rgbaDic.color, rgbaDic.alpha)
+        
+        let strokeWidth = styles.strokeWidth || 0.0
+        let lineCap = styles.lineCap || ''
+        let lineJoin = styles.lineJoin || ''
+        let miterLimit = styles.miterLimit || ''
 
-        this.graphics.beginFill(this.requestHexFromRGB(styles.stroke), styles.stroke[3])
-        //     const width = styles.strokeWidth || 0.0;
-        //     const caps = styles.lineCap || '';
-        //     const joints = styles.lineJoin || '';
-        //     const miterLimit = styles.miterLimit || '';
-        //     // shape.setStrokeStyle(width, caps, joints, miterLimit, true);
-        // if (styles && styles.fill) {
-        //     // shape.beginFill(`rgba(${parseInt(styles.fill[0] * 255)}, ${parseInt(styles.fill[1] * 255)}, ${parseInt(styles.fill[2] * 255)}, ${styles.fill[3]})`);
-        // }
-        // if (styles && styles.lineDash) {
-        //     // shape.setStrokeDash([styles.lineDash[0], styles.lineDash[1]], styles.lineDash[2]);
-        // }
+        this.graphics.lineStyle(strokeWidth, rgbaDic.color, rgbaDic.alpha, true, "showAll", lineCap, lineJoin, miterLimit)
+        if (styles && styles.fill) {
+            // shape.beginFill(`rgba(${parseInt(styles.fill[0] * 255)}, ${parseInt(styles.fill[1] * 255)}, ${parseInt(styles.fill[2] * 255)}, ${styles.fill[3]})`);
+        }
+        if (styles && styles.lineDash) {
+            // shape.setStrokeDash([styles.lineDash[0], styles.lineDash[1]], styles.lineDash[2]);
+        }
     }
     
-    private requestHexFromRGB(color: any): number{
-        if(!color) { return 0xffffff }
-        var x = 16777215
-        return x
+    private requestHexFromRGBA(color: any): any{
+        if(!color) { return {"color": 0xffffff, "alpha": 0} }
+        let hexColor = (((color[0] * 255) << 16) | ((color[1] * 255) << 8) | color[2] * 255)
 
+        return {"color": hexColor, "alpha": color[3]}
     }
 
     private drawBezierElement(currentPoint, method, args) {
