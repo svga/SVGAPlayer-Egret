@@ -235,7 +235,6 @@ class Player extends SVGALayer {
 
         shape.matrix = this.matrix
         this.parent.addChild(shape)
-
         this.mask = shape
     }
 

@@ -19,6 +19,7 @@ class Renderer {
         if (this.owner.videoItem.images === undefined || bitmapKey.length == 0) {
             this.bitmapCache = {};
             this.prepared = true;
+            this.owner._setupChildren(this.bitmapCache)
             return;
         }
         if (this.bitmapCache === undefined) {

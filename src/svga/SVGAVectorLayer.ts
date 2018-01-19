@@ -28,31 +28,35 @@ class SVGAVectorLayer extends egret.Sprite {
 
     private resetStyle(obj: BezierPath) {
         let styles = obj._styles
-        if (!styles) { return }
-        let rgbaDic: any = this.requestHexFromRGBA(styles.stroke)
-        this.graphics.beginFill(rgbaDic.color, rgbaDic.alpha)
+        let rgbaDic: any = null
+        if (styles && styles.stroke) {
+            console.log("styles.stroke")
+            rgbaDic = this.requestHexFromRGBA(styles.stroke)
 
-        let strokeWidth = styles.strokeWidth || 0.0
-        let lineCap = styles.lineCap || ''
-        let lineJoin = styles.lineJoin || ''
-        let miterLimit = styles.miterLimit || ''
-
-        this.graphics.lineStyle(strokeWidth, rgbaDic.color, rgbaDic.alpha, true, "showAll", lineCap, lineJoin, miterLimit)
-        if (styles && styles.fill) {
-            // shape.beginFill(`rgba(${parseInt(styles.fill[0] * 255)}, ${parseInt(styles.fill[1] * 255)}, ${parseInt(styles.fill[2] * 255)}, ${styles.fill[3]})`);
+            let strokeWidth = styles.strokeWidth || 0.0
+            let lineCap = styles.lineCap || ''
+            let lineJoin = styles.lineJoin || ''
+            let miterLimit = styles.miterLimit || ''
+            this.graphics.lineStyle(strokeWidth, rgbaDic.color, rgbaDic.alpha, true, "showAll", lineCap, lineJoin, miterLimit)
         }
+        if (styles && styles.fill) {
+            console.log("styles.fill")
+            rgbaDic = this.requestHexFromRGBA(styles.fill)
+            this.graphics.beginFill(rgbaDic.color, rgbaDic.alpha)
+        }
+        if (rgbaDic == null) {
+            rgbaDic = { "color": 0xffffff, "alpha": 1 }
+        }
+
         if (styles && styles.lineDash) {
+            console.log("styles.lineDash")
             // shape.setStrokeDash([styles.lineDash[0], styles.lineDash[1]], styles.lineDash[2]);
         }
     }
 
     private requestHexFromRGBA(color: any): any {
-        if (!color) {
-            console.log(color)
-             return { "color": 0xffffff, "alpha": 1 } 
-        }
-        let hexColor = (((color[0] * 255) << 16) | ((color[1] * 255) << 8) | color[2] * 255)
 
+        let hexColor = (((color[0] * 255) << 16) | ((color[1] * 255) << 8) | color[2] * 255)
         return { "color": hexColor, "alpha": color[3] }
     }
 
@@ -166,7 +170,6 @@ class SVGAVectorLayer extends egret.Sprite {
                 break;
             case 'Z':
             case 'z':
-                // shape.graphics.closePath();
                 break;
             default:
                 break;

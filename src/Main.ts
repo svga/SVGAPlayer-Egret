@@ -13,15 +13,14 @@ class Main extends egret.DisplayObjectContainer {
         let player = new Player()
 
         // player.loops = 1
-        player.width = 500
-        player.height = 500
+        player.width = 550  
+        player.height = 400
         player.x = 0
         player.y = 0
         player.clearsAfterStop = false
         this.addChild(player)
 
-        parser.load('http://p275rzl86.bkt.clouddn.com/shengli.svga', function (videoItem) {
-            console.log(videoItem)
+        parser.load('http://p275rzl86.bkt.clouddn.com/bear.svga', function (videoItem) {
             player.setVideoItem(videoItem)
             player.startAnimation()
         }, function (error) { })
